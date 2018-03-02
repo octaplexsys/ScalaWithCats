@@ -10,7 +10,7 @@ trait JsWriter[A] { // General rule: typeclass is always invariant
   def write(a: A): Json
 }
 
-object JsWriterInstances {
+object JsWriterInstances { // Instances of TypeClass
   implicit val stringWriter = {
     new JsWriter[String] {
       def write(a: String) = JsString(a)
@@ -46,6 +46,6 @@ object JsWriterInstances {
   }
 }
 
-object Json {
+object Json { // Interface Object
   def toJson[A](a: A)(implicit jsWriter: JsWriter[A]): Json = jsWriter.write(a)
 }
