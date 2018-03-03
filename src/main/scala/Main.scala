@@ -1,4 +1,5 @@
 import json.Person
+import printable.{Cat, Printable}
 
 object Main extends App {
   import json.JsWriterInstances._
@@ -21,4 +22,9 @@ object Main extends App {
         def none[A]: Option[A] = None
     }
 
+
+  import printable.PrintableInstances._
+  Printable.print(2348279)
+  Printable.print("thisisastring")
+  Printable.print(Cat("catName", 349, "blue"))
 }
