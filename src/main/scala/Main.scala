@@ -1,6 +1,8 @@
+import json.Person
+
 object Main extends App {
-  import JsWriterInstances._
-  import Json._
+  import json.JsWriterInstances._
+  import json.Json._
 
   println(toJson("Hello"))
   println(toJson(389474))

@@ -1,3 +1,5 @@
+package json
+
 sealed trait Json
 case object JsNull extends Json
 case class JsString(get: String) extends Json
