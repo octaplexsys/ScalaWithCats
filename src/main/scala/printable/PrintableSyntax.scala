@@ -1,6 +1,6 @@
 package printable
 
-// EXAMPLE OF EXTENSION METHODS
+// EXTENSION METHODS
 object PrintableSyntax {
   implicit class PrintableOps[A](a: A) { // HOW DOES THIS EVEN WORK?
 
