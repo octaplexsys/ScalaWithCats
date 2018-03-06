@@ -27,4 +27,8 @@ object Main extends App {
   Printable.print(2348279)
   Printable.print("thisisastring")
   Printable.print(Cat("catName", 349, "blue"))
+
+  // Extension methods
+  Printable.print("hello extension method")
+  Printable.print(Cat("cat2", 663, "red"))
 }
