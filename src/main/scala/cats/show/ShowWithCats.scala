@@ -1,6 +1,6 @@
 package cats.show
 
-import java.util.Date
+import java.util.{Date, UUID}
 
 object ShowWithCats {
   import cats.Show
@@ -26,11 +26,16 @@ object ShowWithCatsExtensions {
   "Hey hey".show
   28377892.show
 
-  implicit val dateShow: Show[Date] = {
+  implicit val dateShow: Show[Date] = { // Can define custom instances of Show typeclass like so
     new Show[Date] {
       override def show(t: Date): String = t.formatted("YYYYmmDD")
     }
   }
+  // Or like this
+  implicit val uuidShow: Show[UUID] = {
+    Show.show( (uuid: UUID) => s"$uuid is a UUID")
+  }
 
   new Date().show
+  UUID.randomUUID().show
 }

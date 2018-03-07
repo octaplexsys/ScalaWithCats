@@ -1,4 +1,5 @@
-import java.util.Date
+import java.util.{Date, UUID}
+
 import json.Person
 import printable.{Cat, Printable}
 
@@ -39,5 +40,7 @@ object Main extends App {
   import cats.syntax.show._ // Why do I need these here too???
 
   val date = new Date()
-  date.show // BOOOOO
+  date.show
+  UUID.randomUUID().show
+
 }
