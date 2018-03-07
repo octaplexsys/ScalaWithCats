@@ -1,3 +1,4 @@
+import java.util.Date
 import json.Person
 import printable.{Cat, Printable}
 
@@ -32,4 +33,11 @@ object Main extends App {
   Cat("ExtensionMethodExample", 573, "purple").print
   "Hello extension method on string".print
   ("can these be combined " + 5).print
+
+  // CatsShow
+  import cats.show.ShowWithCatsExtensions._
+  import cats.syntax.show._ // Why do I need these here too???
+
+  val date = new Date()
+  date.show // BOOOOO
 }
