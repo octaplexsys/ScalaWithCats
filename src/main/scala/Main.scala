@@ -40,7 +40,8 @@ object Main extends App {
   import cats.syntax.show._ // Why do I need these here too???
 
   val date = new Date()
-  date.show
-  UUID.randomUUID().show
+  println(date.show)
+  println(UUID.randomUUID().show)
+  println(Cat("bob", 384, "red").show)
 
 }
