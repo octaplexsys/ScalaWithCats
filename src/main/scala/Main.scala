@@ -44,4 +44,11 @@ object Main extends App {
   println(UUID.randomUUID().show)
   println(Cat("bob", 384, "red").show)
 
+  //CatsEq
+  import cats.eq.EqWithCats._
+  import cats.syntax.eq._
+  val cat1 = Cat("meow", 593, "blue")
+  val cat2 = Cat("badCat", 593, "red")
+  println(cat1 === cat2)
+
 }
