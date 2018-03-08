@@ -47,8 +47,16 @@ object Main extends App {
   //CatsEq
   import cats.eq.EqWithCats._
   import cats.syntax.eq._
-  val cat1 = Cat("meow", 593, "blue")
-  val cat2 = Cat("badCat", 593, "red")
+
+  val cat1 = Cat("Garfield",
+    38, "orange and black")
+  val cat2 = Cat("Heathcliff", 33, "orange and black")
   println(cat1 === cat2)
+  println(cat1 === cat1)
+
+  import cats.instances.option._
+  val optionCat1 = Option(cat1)
+  val optionCat2 = Option.empty[Cat]
+  println(optionCat1 === optionCat2)
 
 }
