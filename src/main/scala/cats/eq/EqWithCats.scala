@@ -12,7 +12,6 @@ object EqWithCats {
   eqInt.eqv(0, 0)
 
   // eqInt.eqv("434", 434) // Doesn't compile
-
   "3434" == 3242 // Weirdly compiles
 
   1 === 2 // We imported the cats syntax for eq so we can use this
@@ -27,4 +26,5 @@ object EqWithCats {
 
   import cats.instances.string._
   "hello".some =!= "blah".some
+  // test for git
 }
