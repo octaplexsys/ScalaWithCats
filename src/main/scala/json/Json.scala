@@ -8,7 +8,7 @@ case class JsObject(get: Map[String, Json]) extends Json
 
 case class Person(name: String, email: String)
 
-trait JsWriter[A] { // General rule: typeclass is always invariant
+trait JsWriter[-A] { // General rule: typeclass is always invariant
   def write(a: A): Json
 }
 
