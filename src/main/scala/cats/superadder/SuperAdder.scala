@@ -1,33 +1,43 @@
 package cats.superadder
 
 import cats.Monoid
+import cats.instances.int._
+import cats.instances.option._
+import cats.instances.list._
+import cats.syntax.all._
 
 object SuperAdder {
   def add(items: List[Option[Int]]): Int = {
+    // WHY NOT?
+    items.flatten.sum // Handles List[Option[Int]]
 
-//    This doesn't work :-(
-//    items.fold(0){case(o1: Option[Int], o2: Option[Int]) =>
-//      Monoid[Int].combine(o1.getOrElse(Monoid[Int].empty), o2.getOrElse(Monoid[Int].empty))
-//    }
+    //This works but why would you do this :-(
+    items.foldLeft(Monoid[Int].empty)((acc: Int, opt: Option[Int]) => Monoid[Int].combine(acc,opt.getOrElse(Monoid[Int].empty)))
 
-    import cats.instances.list._
-    import cats.instances.option._
-    import cats.instances.int._
+    // Option 1.
+    items.combineAll.orEmpty
+    Monoid[Option[Int]].combineAll(items).getOrElse(Monoid[Int].empty)
 
-    Monoid[Option[Int]].combine(Option(23), Option(43))
-
-    items.fold(0)((o1, o2) =>
-    o1
-    )
-
-    Monoid[List[Option[Int]]].combine(items, Nil)
-
-
+    // Option 2.
+    items.flatten.combineAll
   }
 
-  /*
-   items.fold(0)(_ + _)
-   items.sum // Handles List[Int]
-   items.flatten.sum // Handles List[Option[Int]]
-  */
+  def add2[A](items: List[Option[A]])(implicit M: Monoid[A]): A = {
+    Monoid[Option[A]].combineAll(items).orEmpty
+  }
+}
+
+case class Order(totalCost: Double, quantity: Double)
+// You might also implement combine here on the case class then call it in the companion object which uses cats,
+// in this way you can support both ppl who use cats and those who do not.
+
+object Order {
+  val empty: Order = Order(0,0) // Because you don't want to instantiate a new order everytime you call .empty
+
+  implicit val monoidOrder2: Monoid[Order] = new Monoid[Order] {
+    override def empty: Order = Order.empty
+
+    override def combine(x: Order, y: Order): Order =
+      Order(x.totalCost + y.totalCost, x.quantity + y.quantity)
+  }
 }

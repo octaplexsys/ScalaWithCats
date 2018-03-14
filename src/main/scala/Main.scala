@@ -61,5 +61,5 @@ object Main extends App {
 
   // SuperAdder
   import cats.superadder.SuperAdder._
-  println(add(List(1,2,3,4)))
+  println(add(List(None,Some(2),Some(3),Some(4))))
 }
