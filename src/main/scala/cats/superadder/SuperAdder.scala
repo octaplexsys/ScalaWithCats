@@ -22,7 +22,7 @@ object SuperAdder {
     items.flatten.combineAll
   }
 
-  def add2[A](items: List[Option[A]])(implicit M: Monoid[A]): A = {
+  def add[A](items: List[Option[A]])(implicit M: Monoid[A]): A = { // OR add[A : Monoid] without the implicit parameter
     Monoid[Option[A]].combineAll(items).orEmpty
   }
 }
@@ -32,7 +32,7 @@ case class Order(totalCost: Double, quantity: Double)
 // in this way you can support both ppl who use cats and those who do not.
 
 object Order {
-  val empty: Order = Order(0,0) // Because you don't want to instantiate a new order everytime you call .empty
+  val empty: Order = Order(0,0) // Because you don't want to instantiate a new order every time you call .empty
 
   implicit val monoidOrder2: Monoid[Order] = new Monoid[Order] {
     override def empty: Order = Order.empty
