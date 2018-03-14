@@ -59,4 +59,7 @@ object Main extends App {
   val optionCat2 = Option.empty[Cat]
   println(optionCat1 === optionCat2)
 
+  // SuperAdder
+  import cats.superadder.SuperAdder._
+  println(add(List(1,2,3,4)))
 }
