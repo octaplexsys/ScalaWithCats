@@ -6,7 +6,7 @@ import cats.instances.option._
 
 object FunctorsAreFun extends App {
   val list1 = List(1,2,3)
-  // Notice how List doesn't need to be parameterized below.
+  // Notice how neither List nor Option need to be parameterized below.
   // It's because of higher kinded types.
   val list2 = Functor[List].map(list1)(_ * 2)
   println(list2)
