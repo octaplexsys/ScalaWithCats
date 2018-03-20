@@ -63,7 +63,6 @@ object Main extends App {
   import cats.superadder.SuperAdder._
   println(add(List(None,Some(2),Some(3),Some(4))))
   import cats.superadder.Order._
-  import cats.instances.int._
 
   println(add(List(None,Some(2),Some(3),Some(4))))
   println(add(List(Option(cats.superadder.Order(1.0, 4.2)), Option(cats.superadder.Order(2.1,5.6)))))
