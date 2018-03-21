@@ -2,7 +2,7 @@ package printable
 
 // EXTENSION METHODS
 object PrintableSyntax {
-  implicit class PrintableOps[A](a: A) { // HOW DOES THIS EVEN WORK?
+  implicit class PrintableOps[A](a: A) {
 
     def format(implicit printableA: Printable[A]): String = {
       printableA.format(a)
