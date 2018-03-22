@@ -1,10 +1,9 @@
 package printable
 
-import printable.PrintableInstances._
-
 import scala.language.higherKinds
 
 case class Cat(name: String, age: Int, color: String)
+case class Box[A](value: A)
 
 trait Printable[A] { self =>
   def format(a: A): String
@@ -47,6 +46,16 @@ object PrintableInstances{
     }
   }
 
+  implicit val booleanPrinter: Printable[Boolean] = {
+    new Printable[Boolean] {
+      override def format(a: Boolean): String = s"this is $a"
+    }
+  }
+
+  implicit def boxPrinter[A](implicit aPrinter: Printable[A]): Printable[Box[A]] = {
+    aPrinter.contramap((boxedA: Box[A]) => boxedA.value)
+  }
+
 }
 
 object Printable {
@@ -61,6 +70,8 @@ object Printable {
 }
 
 object TryPrintable extends App {
+  import PrintableInstances._
+  import Printable._
 
   case class Person(name: String, address: String, age: Int)
   val printName: Printable[Person] = printableString.contramap((p: Person) => { println("converting a person to a name"); p.name})
@@ -79,5 +90,9 @@ object TryPrintable extends App {
   val vanityAgePrinter: Printable[Person] = printableInt.contramap((p: Person) => {println("lying on a government form"); p.age - 10})
   println(vanityAgePrinter.format(Person("Matt", "321 Fake Street", 29)))
 
+  println(format(true))
+
+  println(format(Box(false)))
+  println(format(Box("stringyThing")))
 }
 
