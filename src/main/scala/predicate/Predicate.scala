@@ -29,19 +29,24 @@ trait Predicate[-A] { self =>
   }
 }
 
+object PredicateInstances {
+  implicit val isRed = new Predicate[Apple] {
+    override def apply(a: Apple): Boolean = a.color.toLowerCase == "red" // Does this mean I only get one predicate for all of apples???
+  }
+}
+
 case class Apple(color: String)
 case class CandyWrapper(apple: Apple)
 
 object TryPredicate extends App {
-
-  val isRed = new Predicate[Apple] {
-    override def apply(a: Apple): Boolean = a.color.toLowerCase == "red" // Does this mean I only get one predicate for all of apples???
-  }
+  import PredicateInstances._
 
   val candiedAppleGreen = CandyWrapper(Apple("Green"))
   val candiedAppleRed = CandyWrapper(Apple("red"))
 
-  println(isRed.contramap((candyWrapper: CandyWrapper) => candyWrapper.apple)(candiedAppleGreen))
-  println(isRed.contramap((candyWrapper: CandyWrapper) => candyWrapper.apple)(candiedAppleRed))
+  val inspectWrappedApple: Predicate[CandyWrapper] = isRed.contramap((candyWrapper: CandyWrapper) => candyWrapper.apple)
+
+  println(inspectWrappedApple(candiedAppleGreen))
+  println(inspectWrappedApple(candiedAppleRed))
 
 }
