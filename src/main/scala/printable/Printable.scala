@@ -7,14 +7,13 @@ case class Box[A](value: A)
 
 trait Printable[A] { self =>
   def format(a: A): String
-
+  // MAP : F[A], A =>B, F[B]
+  // CMap : F[A], B => A, F[B]
   def contramap[B](f: B => A): Printable[B] = {
     new Printable[B] {
       override def format(b: B): String = self.format(f(b))
     }
   }
-  // MAP : F[A], A =>B, F[B]
-  // CMap : F[A], B => A, F[B]
 }
 
 object PrintableInstances{
@@ -90,7 +89,7 @@ object TryPrintable extends App {
   val vanityAgePrinter: Printable[Person] = printableInt.contramap((p: Person) => {println("lying on a government form"); p.age - 10})
   println(vanityAgePrinter.format(Person("Matt", "321 Fake Street", 29)))
 
-  println(format(true))
+  print(true)
 
   println(format(Box(false)))
   println(format(Box("stringyThing")))
