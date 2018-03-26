@@ -34,7 +34,7 @@ object CodecInstances {
   }
 
   implicit def boxCodec[A](implicit codecA: Codec[A]): Codec[Box[A]] = {
-    // can i use the imap method from codecA to do this?
+    // can I use the imap method from codecA to do this?
     codecA.imap(innerUnboxedA => Box(innerUnboxedA), boxedValue => boxedValue.value)
   }
 }
