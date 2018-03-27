@@ -1,17 +1,14 @@
 package monad
 
-trait Id[_] { // I feel like this one doesn't / shouldn't need a container type F[_], but does it need a type param???
-  def pure[A](a: A): Id[A]
-  def unapply[A]: A
-  def flatMap[A, B](instance: Id[A])(f: A => Id[B]): Id[B]
-  def map[A, B](instance: Id[A])(f: A => B ): Id[B] = flatMap(instance)((a: A) => pure(f(a)))
+import cats.Monad
+
+object Id {
+  type Id[A] = A
+  val monadId: Monad[Id] = new Monad[Id] {
+    override def pure[A](a: A): Id[A] = a
+
+    override def flatMap[A, B](value: Id[A])(f: A => Id[B]): Id[B] = f(value)
+
+    override def map[A, B](value: Id[A])(f: A => B): Id[B] = f(value)
+  }
 }
-
-case class Id[A](a: A) extends Id[A] {
-  override def pure[A](a: A): Id[A] = this.map(this)(identity)
-
-  override def unapply[A] = a
-
-  override def flatMap[A, B](instance: Id[A])(f: A => Id[B]): Id[B] =
-}
-
