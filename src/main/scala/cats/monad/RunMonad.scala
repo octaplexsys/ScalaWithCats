@@ -1,13 +1,16 @@
 package cats.monad
 
-import cats.Monad
-import cats.instances.option._
 import cats.instances.list._
-import cats.syntax.functor._
+import cats.instances.option._
 import cats.syntax.flatMap._
-import cats.Id
+import cats.syntax.functor._
+import cats.{Id, Monad}
+
+import scala.concurrent.Future
+//import scala.concurrent.ExecutionContext.Implicits.global
 
 object RunMonad extends App {
+
   println(Monad[Option].pure(1).map(_ + 1))// this map is the regular option map.......
   println(Monad[List].pure("jfkdf"))// list and option already form a monad, why do I need this?
 
@@ -31,4 +34,9 @@ object RunMonad extends App {
   println(sumSquareForComprehension(List(1L,2L), List(3L,4L)))
 
   println(sumSquare[Id](45L, 59993721L))
+
+  import cats.instances.future._
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val fm = Monad[Future]
+  fm.pure("hello").flatMap(x => Future(x + "!!"))
 }
