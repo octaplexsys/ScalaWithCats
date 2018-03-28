@@ -7,14 +7,17 @@ import cats.syntax.functor._
 import cats.{Id, Monad}
 
 import scala.concurrent.Future
-//import scala.concurrent.ExecutionContext.Implicits.global
+import cats.instances.future._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object RunMonad extends App {
+  // cats monad instances
+  println(Monad[Option].pure(1).map(_ + 1))
+  println(Monad[List].pure("jfkdf"))
+  val fm = Monad[Future]
+  fm.pure("hello").flatMap(x => Future(x + "!!"))
 
-  println(Monad[Option].pure(1).map(_ + 1))// this map is the regular option map.......
-  println(Monad[List].pure("jfkdf"))// list and option already form a monad, why do I need this?
-
-
+  // Custom instance
   def sumSquare[F[_]](a: F[Long], b: F[Long])(implicit m: Monad[F]): F[Long] =
     m.map2(a,b)(sumSquares)
 
@@ -35,8 +38,5 @@ object RunMonad extends App {
 
   println(sumSquare[Id](45L, 59993721L))
 
-  import cats.instances.future._
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val fm = Monad[Future]
-  fm.pure("hello").flatMap(x => Future(x + "!!"))
+
 }
