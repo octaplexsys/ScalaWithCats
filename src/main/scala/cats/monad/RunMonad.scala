@@ -45,6 +45,7 @@ object SumSquare{
     a * a + b * b
 }
 
+
 object CatsEither extends App {
 import cats.syntax.either._
   val e1: Either[Nothing, Int] = Right(1)
@@ -72,4 +73,14 @@ import cats.syntax.either._
   countPositives(List(1,2,3))
   countPositives(List(1,-2,3))
 
+  println(Either.catchOnly[NumberFormatException]("foo".toInt))
+  println(Either.catchNonFatal(sys.error("oops")))
+//  println(Either.catchNonFatal(throw new ThreadDeath()))
+
+  // Either[Left, Right]
+  println("Error".asLeft[Int].getOrElse(0))
+  println("error".asLeft[List[String]].orElse(List("Hello").asRight[Int]))
+
+  // Ensure!!!
+  println(-1.asRight[String].ensure("mustBeNonNegative")(_ > 0))
 }
