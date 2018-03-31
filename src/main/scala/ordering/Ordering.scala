@@ -5,7 +5,7 @@ package ordering
 // Ordering[Doge] -> Ordering[Animal]? n
 // Ordering[Animal] -> Ordering[Doge]? y
 trait Ordering[-A] { self =>
-  def compareStuff(a1: A, a2: A): Int // = compare(a1, a2) do I need to provide an implementation??
+  def compareStuff(a1: A, a2: A): Int // classes
 
   def contramap[B](f: B => A): Ordering[B] = {
     new Ordering[B] {

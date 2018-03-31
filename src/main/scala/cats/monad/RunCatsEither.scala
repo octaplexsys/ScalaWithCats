@@ -53,7 +53,4 @@ object CatsEither extends App {
   Either.fromOption[Long, String](Some("Hi"), 0L)
   Either.fromOption[Long, Nothing](None, 0L) // Does this compile? haha!
 
-
-
-
 }
