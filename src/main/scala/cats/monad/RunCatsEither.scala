@@ -19,15 +19,17 @@ object CatsEither extends App {
     y <- b
   } yield x + y
 
+  // Either is used for fail-fast error handling. If you want to collect errors as you go, you will need something else.
   def countPositives(nums: List[Int]): Either[String,Int] = {
     nums.foldLeft(0.asRight[String])((acc, next) =>
       if (next >=0) acc.map(_ + 1 )
-      else Left("Negative number fount")
+      else Left(s"Negative number found: $next")
     )
   }
 
-  countPositives(List(1,2,3))
-  countPositives(List(1,-2,3))
+  println(countPositives(List(1,2,3)))
+  println(countPositives(List(1,-2,3)))
+  println(countPositives(List(1,-2,3 -5))) // fail fast
 
   // Exception handling
   println(Either.catchOnly[NumberFormatException]("foo".toInt))
