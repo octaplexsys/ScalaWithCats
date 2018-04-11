@@ -17,4 +17,17 @@ object EvalMonad extends App {
   println(now.value.show)
   println(later.value.show)
   println(always.value.show)
+
+  val evalTest: Eval[String] = Eval.later("hello later")
+    .map{s =>
+      println("step1")
+      s + " and then map"}
+    .flatMap{ s =>
+      println("step2")
+      Eval.now(s + " finally flatmap")}
+  println(evalTest)
+  println(evalTest.value) // once
+  println(evalTest.value) // twice
+  // Note, that Eval.value is evaluated as a def would be.
+
 }
