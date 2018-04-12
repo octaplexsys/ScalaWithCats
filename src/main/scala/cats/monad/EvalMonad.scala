@@ -49,4 +49,22 @@ object EvalMonad extends App {
   println(evalWithMemoize.value)
   // This call to get the memoized value of Eval doesn't re-evaluate the memoized portion of the chain
 
+  def factorial(n: BigInt): BigInt = {
+    if (n == 1) n
+    else {
+      n * factorial(n - 1)
+    }
+  }
+  println("factorial")
+  println(factorial(1))
+//  println(factorial(50000)) nope
+  def factorialStackSafe(n: BigInt): Eval[BigInt] = {
+    if(n == 1) Eval.now(n)
+    else {
+      Eval.defer(factorialStackSafe(n - 1).map(_ * n))
+    }
+  }
+  println("factorialStackSafe")
+  println(factorialStackSafe(50000).value)
+
 }
