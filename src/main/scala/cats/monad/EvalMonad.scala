@@ -91,4 +91,13 @@ object EvalMonad extends App {
   println(foldRightWithEval.value)
 
 
+  // Checking to make sure they return the same value
+  for (i <- 1 to 100){
+    println("non stack safe factorial:")
+    println(factorial(i))
+    println("stack safe factorial: ")
+    println(factorialStackSafe(i).value)
+    println
+  }
+
 }
