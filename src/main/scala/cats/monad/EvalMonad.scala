@@ -62,9 +62,33 @@ object EvalMonad extends App {
     if(n == 1) Eval.now(n)
     else {
       Eval.defer(factorialStackSafe(n - 1).map(_ * n))
+      // we need the Eval.defer to trampoline our recursive call to factorial
     }
   }
   println("factorialStackSafe")
-  println(factorialStackSafe(50000).value)
+//  println(factorialStackSafe(50000).value) // this does not stack overflow but it is slow
+
+  def foldRightNaive[A, B](as: List[A], acc: B)(fn: (A, B) => B): B = {
+    as match {
+      case Nil => acc
+      case h :: t => fn(h, foldRightNaive(t, acc)(fn))
+    }
+  }
+
+  /// println(foldRightNaive(1 to 100000 toList, 1)((next: Int, acc: Int) => next * acc)) // not stack safe
+  println("foldR")
+  println(foldRightNaive(1 to 10 toList, 1)((next: Int, acc: Int) => next * acc)) // not stack safe
+
+  def foldRight[A, B](as: List[A], acc: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = {
+    as match {
+      case Nil => acc
+      case h :: t => Eval.defer(f(h, foldRight(t, acc)(f)))
+    }
+  }
+
+  private val foldRightWithEval: Eval[Int] = foldRight(1 to 100000 toList, Eval.now(1))((next: Int, acc: Eval[Int]) => acc.map(_ * next))
+  println("FoldRightEval")
+  println(foldRightWithEval.value)
+
 
 }
