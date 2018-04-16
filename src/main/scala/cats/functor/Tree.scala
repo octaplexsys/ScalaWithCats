@@ -23,7 +23,7 @@ object TreeMain extends App {
   val tree: Tree[String] = Branch(Leaf("HI"),Branch(Leaf("PLZ"),Leaf("WORK")))
 
   val test = Functor[Tree].map(tree)(v => addExclamations(v))
-  tree.map(addExclamations)
+  tree.map[String](addExclamations)
 
   def addExclamations(str: String): String = {
     str + "!!"

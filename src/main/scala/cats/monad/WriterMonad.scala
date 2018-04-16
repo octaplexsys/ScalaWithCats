@@ -15,4 +15,22 @@ class WriterMonad {
 
   val logWithNoValue: Writer[Vector[String], Unit] = Vector("Hello").tell
 
+  // get value out of a Writer
+  println(writer.value)
+  // get log out of Writer
+  println(writer.written)
+  // or get both!
+  val (log, value) = writer.run
+
+  val w1 = for {
+    v1 <- 534.pure[Logged]
+    _ <- Vector("log 1", "log 2").tell
+    v2 <- Writer(Vector("log3"), 10)
+  } yield v1 + v2
+
+  println(w1.run)
+
+  val w2 = w1.mapWritten(logLines => logLines.map(_.toUpperCase))
+
+  println(w2.run)
 }
