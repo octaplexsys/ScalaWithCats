@@ -1,7 +1,6 @@
 package cats.monad
 
 import cats.data.Writer
-import cats.syntax.applicative._
 import cats.instances.vector._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,10 +21,15 @@ object WriterFactorial extends App {
 
   type Logged[A] = Writer[Vector[String], A]
 
-  def factorialW(n: Int): Logged[Int] = {
-    val runFact = {if (n == 0) 1.pure[Logged] // pure comes from applictative
-    else factorialW(n - 1).bimap(loglines => loglines :+ s"fact $n", i => i * n )}
-    slowly(runFact)
+  def factorial2(n: Int): Logged[Int] = {
+    val evalFact = {
+      if (n == 0) Writer(Vector(s"fact $n 1"), 1)
+      else factorial2(n - 1) flatMap { r =>
+          val current = r * n
+          Writer(Vector(s"fact $n $current"), current)
+      }
+    }
+    slowly(evalFact)
   }
 
   Await.result(Future.sequence(Vector(
@@ -33,6 +37,11 @@ object WriterFactorial extends App {
     Future(factorial(3))
   )), 5.seconds)
 
-  println(factorialW(4).run)
+  println(factorial2(3).run)
+
+  Await.result(Future.sequence(Vector(
+    Future(println(factorial2(4))),
+    Future(println(factorial2(4)))
+  )), 5.seconds)
 
 }
