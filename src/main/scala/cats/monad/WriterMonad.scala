@@ -7,7 +7,7 @@ import cats.syntax.writer._
 
 // Writer monad is used for keeping track of things as you're computing things.
 // focus on data that matters while collecting something else
-class WriterMonad {
+object WriterMonad extends App {
   // Writer monad allows us to carry log along with computation
   val writer: WriterT[Id, Vector[String], Int] = Writer(Vector("step1", "step2", "step3"), 50475)
   // WriterT is the monad transformer version of Writer
@@ -39,10 +39,19 @@ class WriterMonad {
   def logLine(logLines: Vector[String]): Vector[String] = {logLines.map(_ + "!")}
   def number(i: Int) = i + 2
   // you can use bimap on a writerMonad
-  w2.bimap(logLine, number)
+  val result1 = w2.bimap(logLine, number)
+  println(result1)
 
   // you can use mapBoth on a writerMonad too
-  w2.mapBoth((strings, int) => (strings.map(_ + "!!"), int + 1 ))
+  val result2 = w2.mapBoth((strings, int) => (strings.map(_ + "!!"), int + 1 ))
+  println(result2)
+
+  // you can swap the l and right side of a writer monad
+  println(w1.swap)
+
+  // you can reset the writer
+  println(w1.reset)
+  println(w1)
 
 
 }
