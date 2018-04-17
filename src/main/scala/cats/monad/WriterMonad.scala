@@ -52,6 +52,4 @@ object WriterMonad extends App {
   // you can reset the writer
   println(w1.reset)
   println(w1)
-
-
 }
