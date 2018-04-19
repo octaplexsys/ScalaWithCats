@@ -2,10 +2,10 @@ package cats.monad
 import cats.Id
 import cats.data.{Kleisli, Reader}
 
-case class Cat(name: String, age: Int)
-
 object ReaderMonad extends App {
-// Reader is used to sequence computations that depend on an input
+  case class Cat(name: String, age: Int)
+
+  // Reader is used to sequence computations that depend on an input
   def catsName(c: Cat):String = c.name
 
   // use the apply method from Reader

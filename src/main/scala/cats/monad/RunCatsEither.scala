@@ -2,7 +2,7 @@ package cats.monad
 
 import scala.util.Try
 
-object CatsEither extends App {
+object RunCatsEither extends App {
   import cats.syntax.either._
   val e1: Either[Nothing, Int] = Right(1)
   val e2 = Right(3)
