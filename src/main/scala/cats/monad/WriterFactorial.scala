@@ -36,9 +36,9 @@ object WriterFactorial extends App {
   def factorial3(n: Int): Logged[Int] = {
     for {
       value <- if (n == 0) 1.pure[Logged]
-            else  factorial3(n - 1).map(i => i * n)
+            else factorial3(n - 1).map(i => i * n)
       _ <- Writer.tell(Vector(s"fact $n $value"))
-    } yield value
+    } yield slowly(value)
   }
 
   Await.result(Future.sequence(Vector(
@@ -55,7 +55,7 @@ object WriterFactorial extends App {
   )), 5.seconds)
 
   Await.result(Future.sequence(Vector(
-    Future(println(factorial2(4))),
-    Future(println(factorial2(4)))
+    Future(println(factorial3(4))),
+    Future(println(factorial3(4)))
   )), 5.seconds)
 }
