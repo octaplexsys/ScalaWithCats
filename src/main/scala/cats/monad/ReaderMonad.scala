@@ -21,6 +21,24 @@ object ReaderMonad extends App {
   // Ask team this
   val whyIsThisAlsoKleisli: Kleisli[Id, Cat, String] = readCatsName.map(name => s"hello $name")
 
-  println(greetKitty.run(Cat("Tiger", 4)))
+  val tigerCat = Cat("Tiger", 5)
+  println(greetKitty.run(tigerCat))
+
+  val feedKitty: Reader[Cat, String] =
+    Reader(cat => s"Have a nice bowl of fish")
+
+  // flatmap is supported by reader
+  val greetAndFeed = {
+    for {
+      greet <- greetKitty
+      feed <- feedKitty
+    } yield s"$greet. $feed"
+  }
+
+  // Different syntax
+  val flatMapReader = greetKitty.flatMap(greet => feedKitty.map(feed => s"$greet. $feed" ))
+
+  println(flatMapReader.run(tigerCat))
+  println(greetAndFeed.run(tigerCat))
 
 }
