@@ -1,6 +1,6 @@
 package cats.monad
 
-import cats.data.Reader
+import cats.data.{Kleisli, Reader}
 
 case class Db(usernames: Map[Int, String],
               passwords: Map[String, String])
@@ -22,10 +22,13 @@ object RunDatabaseReader extends App {
   def checkLogin2(userId: Int, password: String): DbReader[Boolean] = {
     for {
       maybeUsername <- findUsername(userId)
-      bool <- for {
-        username <- maybeUsername
-      } yield checkPassword(username, password)
-    } yield bool
+      t <- {
+        val maybeReader: Option[DbReader[Boolean]] = for {
+          user <- maybeUsername
+        } yield checkPassword(user, password)
+        maybeReader.getOrElse(Kleisli.pure(false))
+      }
+    } yield t
   }
 
   val users = Map(
@@ -42,5 +45,10 @@ object RunDatabaseReader extends App {
   println(checkLogin(1, "zerocool").run(db))
   // res10: cats.Id[Boolean] = true
   println(checkLogin(4, "davinci").run(db))
+  // res11: cats.Id[Boolean] = false
+
+  println(checkLogin2(1, "zerocool").run(db))
+  // res10: cats.Id[Boolean] = true
+  println(checkLogin2(4, "davinci").run(db))
   // res11: cats.Id[Boolean] = false
 }
