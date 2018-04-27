@@ -38,4 +38,17 @@ object RunStateMonad extends App {
   val (state, result) = both.run(42).value
   println(s"state: $state, result: $result")
 
+  // get extracts the state as the result
+  val getState: State[Int, Int] = State.get[Int] // which is why both L and R sides of state are same
+  // Sets the L parameter, the state. The R value is Unit.
+  val setState: State[Int, Unit] = State.set[Int](40)
+  // Pure ignores the state and returns the result
+  val pureState: State[Int, String] = State.pure("HI")
+  // Inspect extracts the state via a transformation function
+  val inspectState = State.inspect[Int, String](_ + "STRINGCHANGE")
+  println(inspectState.run(50).value)
+  // Modify updates the state using an update function
+  val modifyState = State.modify[Int]( _ + 49)
+  println(modifyState.run(5).value)
+
 }
