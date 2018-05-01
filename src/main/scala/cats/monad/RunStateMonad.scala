@@ -50,5 +50,4 @@ object RunStateMonad extends App {
   // Modify updates the state using an update function
   val modifyState = State.modify[Int]( _ + 49)
   println(modifyState.run(5).value)
-
 }
