@@ -15,6 +15,7 @@ trait StateMonad[S,A] {
 // inspect(f: S => B) == StateM(s => (s, f(s)))
 // modify(f: S => A) == StateM(s => (f(s), ())
 object StateMonad {
+  // Needs a new name now.
   case class MappedModify[S, A](func: S => (S, A)) extends StateMonad[S, A] {
     override def run(state: S): (S, A) =
       func(state)
@@ -36,6 +37,7 @@ object StateMonad {
       }
     }
   }
+
   def get[S]: StateMonad[S, S] = MappedModify(s => (s, s))
   //  def set[S](state: S): StateMonad[S, Unit] = MappedModify(_ => state, _ => ())
   def set[S](state: S): StateMonad[S, Unit] = MappedModify(s => (state, ()))
@@ -46,6 +48,7 @@ object StateMonad {
   //  def modify[S](f: S => S): StateMonad[S, Unit] = MappedModify(f, _ => ())
   def modify[S](f: S => S): StateMonad[S, Unit] = MappedModify(s => (f(s), ()))
 }
+
 object Test extends App {
   import StateMonad._
   val program: StateMonad[Int, (Int, Int, Int)] =
@@ -60,4 +63,16 @@ object Test extends App {
       _ = println(c)
     } yield (a, b, c)
   program.run(1)
+}
+object PostNotationCalculator extends App {
+import StateMonad._
+  type CalcState[A] = StateMonad[List[Int], A]
+
+  def evalOne(sym: String): CalcState[Int] = {
+    val int = sym.toInt
+    val monadThing: StateMonad[List[Int], Unit] = for {
+     getState <- set[List[Int]](List(int))
+    } yield getState
+    monadThing
+  }
 }

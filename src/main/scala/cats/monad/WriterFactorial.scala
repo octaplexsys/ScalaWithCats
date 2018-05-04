@@ -1,5 +1,6 @@
 package cats.monad
 
+import cats.Monad
 import cats.data.Writer
 import cats.instances.vector._
 import cats.syntax.applicative._
@@ -39,6 +40,14 @@ object WriterFactorial extends App {
             else factorial3(n - 1).map(i => i * n)
       _ <- Writer.tell(Vector(s"fact $n $value"))
     } yield slowly(value)
+  }
+
+  // There is a method on Monad called tailRecM. A way of doing recursion without doing recursion
+  def factorial4(n: Int): Logged[Int] = {
+    val logged = implicitly[Monad[Logged[Int]]]
+    1.pure[Logged]
+    logged.tailRecM[(Int, Int), Int]((0, 1)){
+      case (i, current) => if (i == n) Right(current).pure[Logged] else Left((i + 1 , current * i)).pure[Logged]}
   }
 
   Await.result(Future.sequence(Vector(

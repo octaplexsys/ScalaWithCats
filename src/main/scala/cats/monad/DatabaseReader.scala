@@ -9,6 +9,7 @@ object RunDatabaseReader extends App {
 
   def findUsername(userId: Int): DbReader[Option[String]] =
     Reader(db => db.usernames.get(userId))
+
   def checkPassword(username: String, password: String): DbReader[Boolean] =
     Reader(db => db.passwords.get(username).contains(password))
 
@@ -20,18 +21,6 @@ object RunDatabaseReader extends App {
     }
 
   def checkLogin2(userId: Int, password: String): DbReader[Boolean] = {
-    for {
-      maybeUsername <- findUsername(userId)
-      bool <- {
-        val maybeReader: Option[DbReader[Boolean]] = for {
-          user <- maybeUsername
-        } yield checkPassword(user, password)
-        maybeReader.getOrElse(Kleisli.pure(false))
-      }
-    } yield bool
-  }
-
-  def checkLogin3(userId: Int, password: String): DbReader[Boolean] = {
     for {
       maybeUsername <- findUsername(userId)
       bool <- {
