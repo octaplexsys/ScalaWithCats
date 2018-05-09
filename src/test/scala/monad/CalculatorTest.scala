@@ -4,7 +4,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 class CalculatorTest extends WordSpec with Matchers {
   import Calculator._
-  "evalOne" should {
+  "evalAll" should {
     "take in a number and put it on the stack" in {
       evalAll("5").run(List()) shouldBe (List(5), ())
     }

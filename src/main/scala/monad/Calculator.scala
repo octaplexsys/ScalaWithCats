@@ -7,16 +7,14 @@ object Calculator {
   type CalcState[A] = StateMonad[List[Int], A]
 
   def evalAll(sym: String): CalcState[Unit] = {
-    // evaluate a single symbol.
     val tokens = sym.split(",")
     val test = StateMonad.traverse[List[Int], String, Unit](tokens) { token =>
       val calcSymbol = CalculatorSymbols.apply(token)
       calcSymbol match {
-        // if the symbol is a number, push it onto the stack
         case Number(i) => StateMonad.modify((initialList: List[Int]) => i :: initialList)
-        case o:Operator => StateMonad.modify((initialState: List[Int]) => {
+        case operator:Operator => StateMonad.modify((initialState: List[Int]) => {
           val i1 :: i2 :: tail = initialState
-          o.op(i1, i2) :: tail
+          operator.op(i1, i2) :: tail
         })
       }
     }
@@ -25,15 +23,15 @@ object Calculator {
   }
 
   // This will be sad if tokens was not created from a well formed postfix String
-  def doathing(tokens: Seq[String], stack: List[Int]): Int = {
+  def recursiveCalculator(tokens: Seq[String], stack: List[Int]): Int = {
     tokens match {
       case Nil => stack.head
       case h :: t =>
         CalculatorSymbols(h) match {
-          case Number(value) => doathing(t, value :: stack)
+          case Number(value) => recursiveCalculator(t, value :: stack)
           case r: Operator =>
             val one :: two :: rest = stack
-            doathing(t, r.op(one, two) :: rest)
+            recursiveCalculator(t, r.op(one, two) :: rest)
         }
     }
   }
