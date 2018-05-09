@@ -8,7 +8,6 @@ trait StateMonad[S,A] {
   def runS(state: S): S =
     run(state)._1
 }
-// These things are the algebra bits of the state monad. i.e. "some and none" of Option.
 // get == StateM(s => (s, s))
 // set(30) == StateM(_ => (30, ())
 // pure(30) == StateM(s => (s, 30))
@@ -64,15 +63,15 @@ object Test extends App {
     } yield (a, b, c)
   program.run(1)
 }
+
 object PostNotationCalculator extends App {
-import StateMonad._
+  // A is the top of the stack, the List of Int is stack
   type CalcState[A] = StateMonad[List[Int], A]
 
   def evalOne(sym: String): CalcState[Int] = {
-    val int = sym.toInt
-    val monadThing: StateMonad[List[Int], Unit] = for {
-     getState <- set[List[Int]](List(int))
-    } yield getState
-    monadThing
+    // evaluate a single symbol.
+    // if the symbol is a number, push it onto the stack
+    // if the symbol is an operation, pop the last 2 numbers off the stack and apply the operation
+  ???
   }
 }
