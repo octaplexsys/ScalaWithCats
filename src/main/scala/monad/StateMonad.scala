@@ -39,13 +39,17 @@ object StateMonad {
 
   def get[S]: StateMonad[S, S] = MappedModify(s => (s, s))
   //  def set[S](state: S): StateMonad[S, Unit] = MappedModify(_ => state, _ => ())
-  def set[S](state: S): StateMonad[S, Unit] = MappedModify(s => (state, ()))
+  def set[S](state: S): StateMonad[S, Unit] = MappedModify(_ => (state, ()))
   //  def pure[S, A](result: A): StateMonad[S, A] = MappedModify(identity, _ => result)
   def pure[S, A](result: A): StateMonad[S, A] = MappedModify(s => (s, result))
   //  def inspect[S, A](f: S => A): StateMonad[S, A] = MappedModify(identity, f)
   def inspect[S, A](f: S => A): StateMonad[S, A] = MappedModify(s => (s, f(s)))
   //  def modify[S](f: S => S): StateMonad[S, Unit] = MappedModify(f, _ => ())
   def modify[S](f: S => S): StateMonad[S, Unit] = MappedModify(s => (f(s), ()))
+
+  def traverse[S,A,B](xs: Seq[A])(f: A => StateMonad[S, B]): StateMonad[S, Seq[B]] = {
+    xs.foldLeft[StateMonad[S, Seq[B]]](pure(Seq())){case(acc, next) => acc.flatMap(seqB => f(next).map(seqB :+ _))}
+  }
 }
 
 object Test extends App {
@@ -64,14 +68,3 @@ object Test extends App {
   program.run(1)
 }
 
-object PostNotationCalculator extends App {
-  // A is the top of the stack, the List of Int is stack
-  type CalcState[A] = StateMonad[List[Int], A]
-
-  def evalOne(sym: String): CalcState[Int] = {
-    // evaluate a single symbol.
-    // if the symbol is a number, push it onto the stack
-    // if the symbol is an operation, pop the last 2 numbers off the stack and apply the operation
-  ???
-  }
-}

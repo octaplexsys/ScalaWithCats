@@ -43,12 +43,12 @@ object WriterFactorial extends App {
   }
 
   // There is a method on Monad called tailRecM. A way of doing recursion without doing recursion
-  def factorial4(n: Int): Logged[Int] = {
-    val logged = implicitly[Monad[Logged[Int]]]
-    1.pure[Logged]
-    logged.tailRecM[(Int, Int), Int]((0, 1)){
-      case (i, current) => if (i == n) Right(current).pure[Logged] else Left((i + 1 , current * i)).pure[Logged]}
-  }
+//  def factorial4(n: Int): Logged[Int] = {
+//    val logged = implicitly[Monad[Logged[Int]]]
+//    1.pure[Logged]
+//    logged.tailRecM[(Int, Int), Int]((0, 1)){
+//      case (i, current) => if (i == n) Right(current).pure[Logged] else Left((i + 1 , current * i)).pure[Logged]}
+//  }
 
   Await.result(Future.sequence(Vector(
     Future(factorial(3)),
