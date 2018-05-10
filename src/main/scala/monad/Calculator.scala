@@ -38,6 +38,18 @@ object Calculator {
 
 }
 
+object RunCalc extends App {
+  import Calculator._
+  val program = for {
+    _ <- evalAll("1,2,+")
+    _ <- evalAll("3,4,+")
+    ans <- evalAll("*")
+  } yield ans
+
+  val result = program.run(List())
+  println(result)
+}
+
 
 /**VALID THINGS YOU CAN DO ON A CALCULATOR**/
 sealed trait CalculatorSymbols
