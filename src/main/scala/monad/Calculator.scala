@@ -56,7 +56,6 @@ sealed trait CalculatorSymbols
 
 object CalculatorSymbols {
   def apply(symbol: String): CalculatorSymbols = {
-    println(symbol)
     (Operator.parse(symbol) orElse Try(Number(symbol.toInt)).toOption).get // sadness
   }
 }
