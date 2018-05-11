@@ -27,27 +27,52 @@ object Tree{
     }
 
     // WAT IS IT DOING????
-    @tailrec
-    override def tailRecM[A, B](a: A)(nextStep: A => Tree[Either[A, B]]): Tree[B] = {
-      nextStep(a) match {
-        case Leaf(Right(value)) => Leaf(value)
-        case Leaf(Left(leftA)) => tailRecM(leftA)(nextStep)
-        case Branch(left: Tree[Either[A, B]], right: Tree[Either[A, B]]) =>
+    //    @tailrec
+    //    override def tailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
+    //      f(a) match {
+    //        case Leaf(Right(value)) => Leaf(value)
+    //        case Leaf(Left(leftA)) => tailRecM(leftA)(f)
+    //        case Branch(left: Tree[Either[A, B]], right: Tree[Either[A, B]]) =>
+    //
+    //          val leftBranch = flatMap(left)((eitherAorB:Either[A,B]) =>
+    //          eitherAorB match {
+    //            case Left(valueA) => tailRecM(valueA)(f)
+    //            case Right(valueB) => Leaf(valueB)
+    //          })
+    //
+    //          val rightBranch = flatMap(right)((eitherAorB:Either[A,B]) =>
+    //            eitherAorB match {
+    //              case Left(valueA) => tailRecM(valueA)(f)
+    //              case Right(valueB) => Leaf(valueB)
+    //            })
+    //
+    //          Branch(leftBranch, rightBranch)
+    //      }
+    //    }
 
-          val leftBranch = flatMap(left)((eitherAorB:Either[A,B]) =>
-          eitherAorB match {
-            case Left(valueA) => tailRecM(valueA)(nextStep)
-            case Right(valueB) => Leaf(valueB)
-          })
-
-          val rightBranch = flatMap(right)((eitherAorB:Either[A,B]) =>
-            eitherAorB match {
-              case Left(valueA) => tailRecM(valueA)(nextStep)
-              case Right(valueB) => Leaf(valueB)
-            })
-
-          Branch(leftBranch, rightBranch)
+    // Actual tail recursive implementation
+    override def tailRecM[A, B](a: A)(f: (A) => Tree[Either[A, B]]): Tree[B] = {
+      @tailrec
+      def go(toVisit: List[Tree[Either[A, B]]],
+             toCollect: List[Tree[B]]): List[Tree[B]] = toVisit match {
+        case (tree :: tail) =>
+          tree match {
+            case Branch(l, r) =>
+              l match {
+                case Branch(_, _) => go(l :: r :: tail, toCollect)
+                case Leaf(Left(a)) => go(f(a) :: r :: tail, toCollect)
+                case Leaf(Right(b)) => go(r :: tail, Leaf(b) +: toCollect)
+              }
+            case Leaf(Left(a)) => go(f(a) :: tail, toCollect)
+            case Leaf(Right(b)) =>
+              go(tail,
+                if (toCollect.isEmpty) Leaf(b) +: toCollect
+                else Branch(toCollect.head, Leaf(b)) :: toCollect.tail)
+          }
+        case Nil => toCollect
       }
+
+      go(f(a) :: Nil, Nil).head
     }
   }
 
@@ -71,6 +96,26 @@ object TreeMain extends App {
   })
   println(fmTree)
 
+
+  def walkTreeDFS(a: Tree[String]): String =
+    a match {
+      case Leaf(s) => s
+      case Branch(l, _) =>
+        walkTreeDFS(l)
+    }
+
+  def walkTreeDFSM(a: Tree[String]): String =
+    Monad[Tree].tailRecM(a) {
+      case Leaf(s) => Leaf(Right(s))
+      case Branch(l, _) => Leaf(Left(l))
+    } match {
+      case Leaf(s) => s
+    }
+
+  // Example use case: given a string, take things out of the string and build a tree.
+  def stringToTree(inputString: String): Tree[String] = {
+    Leaf(inputString)
+  }
 
 
   def recursive(a: Int): Int = {
