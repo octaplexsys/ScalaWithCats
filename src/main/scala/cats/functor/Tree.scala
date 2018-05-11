@@ -27,28 +27,27 @@ object Tree{
     }
 
     // WAT IS IT DOING????
-    //    @tailrec
-    //    override def tailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
-    //      f(a) match {
-    //        case Leaf(Right(value)) => Leaf(value)
-    //        case Leaf(Left(leftA)) => tailRecM(leftA)(f)
-    //        case Branch(left: Tree[Either[A, B]], right: Tree[Either[A, B]]) =>
-    //
-    //          val leftBranch = flatMap(left)((eitherAorB:Either[A,B]) =>
-    //          eitherAorB match {
-    //            case Left(valueA) => tailRecM(valueA)(f)
-    //            case Right(valueB) => Leaf(valueB)
-    //          })
-    //
-    //          val rightBranch = flatMap(right)((eitherAorB:Either[A,B]) =>
-    //            eitherAorB match {
-    //              case Left(valueA) => tailRecM(valueA)(f)
-    //              case Right(valueB) => Leaf(valueB)
-    //            })
-    //
-    //          Branch(leftBranch, rightBranch)
-    //      }
-    //    }
+      def notTailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
+          f(a) match {
+            case Leaf(Right(value)) => Leaf(value)
+            case Leaf(Left(leftA)) => tailRecM(leftA)(f)
+            case Branch(left: Tree[Either[A, B]], right: Tree[Either[A, B]]) =>
+
+              val leftBranch = flatMap(left)((eitherAorB:Either[A,B]) =>
+              eitherAorB match {
+                case Left(valueA) => tailRecM(valueA)(f)
+                case Right(valueB) => Leaf(valueB)
+              })
+
+              val rightBranch = flatMap(right)((eitherAorB:Either[A,B]) =>
+                eitherAorB match {
+                  case Left(valueA) => tailRecM(valueA)(f)
+                  case Right(valueB) => Leaf(valueB)
+                })
+
+              Branch(leftBranch, rightBranch)
+          }
+        }
 
     // Actual tail recursive implementation
     override def tailRecM[A, B](a: A)(f: (A) => Tree[Either[A, B]]): Tree[B] = {
@@ -81,7 +80,6 @@ object Tree{
 object TreeMain extends App {
   import Tree._
   import cats.syntax.functor._
-  import cats.syntax.monad._
   val tree: Tree[String] = Branch(Leaf("HI"),Branch(Leaf("PLZ"),Leaf("WORK")))
 
   val test = Functor[Tree].map(tree)(v => addExclamations(v))
@@ -113,8 +111,22 @@ object TreeMain extends App {
     }
 
   // Example use case: given a string, take things out of the string and build a tree.
-  def stringToTree(inputString: String): Tree[String] = {
-    Leaf(inputString)
+  def stringToTree(inputString: String): Tree[Char] = {
+    var treeQueue = List[Tree[Char]]()
+    val rows = inputString.split("\n").toList.reverse // start from leafy bits
+
+    rows.foreach { row =>
+      val nodes = row.toList
+      nodes.foreach { char =>
+        if (char != '^') treeQueue = Leaf(char) :: treeQueue
+        else {
+          val t1 :: t2 :: treeQueueRemainder = treeQueue
+          treeQueue = treeQueueRemainder :+ Branch(t2, t1)
+        }
+      }
+    }
+
+    treeQueue.head
   }
 
 
