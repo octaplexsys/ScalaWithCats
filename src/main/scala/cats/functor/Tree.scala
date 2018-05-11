@@ -110,7 +110,6 @@ object TreeMain extends App {
       case Leaf(s) => s
     }
 
-  // Example use case: given a string, take things out of the string and build a tree.
   def stringToTree(inputString: String): Tree[Char] = {
     var treeQueue = List[Tree[Char]]()
     val rows = inputString.split("\n").toList.reverse // start from leafy bits
