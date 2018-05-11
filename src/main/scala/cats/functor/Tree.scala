@@ -80,6 +80,7 @@ object Tree{
 object TreeMain extends App {
   import Tree._
   import cats.syntax.functor._
+  import cats.instances.list._
   val tree: Tree[String] = Branch(Leaf("HI"),Branch(Leaf("PLZ"),Leaf("WORK")))
 
   val test = Functor[Tree].map(tree)(v => addExclamations(v))
@@ -128,6 +129,23 @@ object TreeMain extends App {
     treeQueue.head
   }
 
+  def treeToList(inputTree: Tree[String]): List[String] = {
+    def go(inputT: Tree[String], listAcc: List[String]):List[String] = {
+      inputT match {
+        case Leaf(value) =>  listAcc :+ value
+        case Branch(l,r) =>
+          go(l, listAcc) ++ go(r,listAcc)
+      }
+    }
+    go(inputTree, Nil)
+  }
+
+  def treeToListTailRecM(inputTree: Tree[String]): List[String] = {
+    Monad[List].tailRecM(inputTree){//tree =>
+      case Leaf(value) => List(Right(value))
+      case Branch(l,r) => List(Left(l)) ++ List(Left(r))
+    }
+  }
 
   def recursive(a: Int): Int = {
     if(a < 100) recursive(a + 1)
