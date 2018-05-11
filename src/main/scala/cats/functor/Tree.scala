@@ -118,10 +118,10 @@ object TreeMain extends App {
     rows.foreach { row =>
       val nodes = row.toList
       nodes.foreach { char =>
-        if (char != '^') treeQueue = Leaf(char) :: treeQueue
+        if (char != '^') treeQueue = treeQueue :+ Leaf(char)
         else {
           val t1 :: t2 :: treeQueueRemainder = treeQueue
-          treeQueue = treeQueueRemainder :+ Branch(t2, t1)
+          treeQueue = treeQueueRemainder :+ Branch(t1, t2)
         }
       }
     }

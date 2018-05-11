@@ -25,6 +25,15 @@ class TreeMainTest extends WordSpec with Matchers {
     """.replaceAll(" ", "")
       stringToTree(tallerTree) shouldBe Branch(Branch(Leaf('a'),Leaf('b')), Leaf('c'))
     }
+    "make a well formed tree" in {
+      val tallerTree =
+        """
+          ^
+        c  ^
+       a b
+    """.replaceAll(" ", "")
+      stringToTree(tallerTree) shouldBe Branch(Leaf('c'),Branch(Leaf('a'),Leaf('b')))
+    }
   }
 }
 
