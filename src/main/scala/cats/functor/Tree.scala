@@ -27,28 +27,27 @@ object Tree{
     }
 
     // WAT IS IT DOING????
-    //    @tailrec
-    //    override def tailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
-    //      f(a) match {
-    //        case Leaf(Right(value)) => Leaf(value)
-    //        case Leaf(Left(leftA)) => tailRecM(leftA)(f)
-    //        case Branch(left: Tree[Either[A, B]], right: Tree[Either[A, B]]) =>
-    //
-    //          val leftBranch = flatMap(left)((eitherAorB:Either[A,B]) =>
-    //          eitherAorB match {
-    //            case Left(valueA) => tailRecM(valueA)(f)
-    //            case Right(valueB) => Leaf(valueB)
-    //          })
-    //
-    //          val rightBranch = flatMap(right)((eitherAorB:Either[A,B]) =>
-    //            eitherAorB match {
-    //              case Left(valueA) => tailRecM(valueA)(f)
-    //              case Right(valueB) => Leaf(valueB)
-    //            })
-    //
-    //          Branch(leftBranch, rightBranch)
-    //      }
-    //    }
+        def thisIsNotTailRecM[A, B](a: A)(f: A => Tree[Either[A, B]]): Tree[B] = {
+          f(a) match {
+            case Leaf(Right(value)) => Leaf(value)
+            case Leaf(Left(leftA)) => tailRecM(leftA)(f)
+            case Branch(left: Tree[Either[A, B]], right: Tree[Either[A, B]]) =>
+
+              val leftBranch = flatMap(left)((eitherAorB:Either[A,B]) =>
+              eitherAorB match {
+                case Left(valueA) => tailRecM(valueA)(f)
+                case Right(valueB) => Leaf(valueB)
+              })
+
+              val rightBranch = flatMap(right)((eitherAorB:Either[A,B]) =>
+                eitherAorB match {
+                  case Left(valueA) => tailRecM(valueA)(f)
+                  case Right(valueB) => Leaf(valueB)
+                })
+
+              Branch(leftBranch, rightBranch)
+          }
+        }
 
     // Actual tail recursive implementation
     override def tailRecM[A, B](a: A)(f: (A) => Tree[Either[A, B]]): Tree[B] = {
@@ -114,18 +113,30 @@ object TreeMain extends App {
 
   // Example use case: given a string, take things out of the string and build a tree.
   def stringToTree(inputString: String): Tree[String] = {
-    Leaf(inputString)
+    val rows = inputString.split("\n").toList
+    walkTreeByRow(rows, null)
   }
 
-
-  def recursive(a: Int): Int = {
-    if(a < 100) recursive(a + 1)
-    else(a)
+  def walkTreeByRow(rows: List[String], treeSoFar: Tree[String]): Tree[String] = {
+    rows match {
+      case row::rowsToVisit => walkRow(row, rowsToVisit, treeSoFar: Tree[String]) // given a row, walk it to create a tree
+      case Nil => println("end of rows " + treeSoFar); treeSoFar // when you reach the end, return your tree that you created
+    }
   }
 
-  var b = 1
-  while(b < 100) {
-    b = b + 1
+  def walkRow(s: String, remainderOfRows: List[String], treeSoFar: Tree[String]): Tree[String] = {
+    s.toList match {
+      case Nil => treeSoFar
+      case h :: tail if h != '^' => println(s"the head is $h; the tail is $tail"); walkRow(tail.toString, remainderOfRows, Leaf(h.toString)) // here, we are finally making the tree, the tree so far is a Leaf
+      case h :: tail if h == '^' => Branch(walkTreeByRow(remainderOfRows, treeSoFar), walkRow(tail.toString, remainderOfRows, treeSoFar)) // This is so broken it's not even funny
+    }
   }
 
+  val tallerTree =
+    """
+          ^
+        ^  c
+       a b
+    """.replaceAll(" ", "")
+  println(tallerTree)
 }
