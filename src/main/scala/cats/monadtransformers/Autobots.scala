@@ -28,16 +28,33 @@ object Autobots extends App {
     canDo.leftMap[String](_ => "Not able to do special move")
   }
 
+  def tacticalReport(ally1: String, ally2: String)(implicit ec: ExecutionContext): String = {
+    val either = Await.result(canSpecialMove(ally1, ally2).value, Duration.Inf)
+    either match {
+      case Right(true) => s"$ally1 and $ally2 are ready to roll out!"
+      case Right(false) => s"$ally1 and $ally2 need a recharge"
+      case Left(str) => str
+    }
+  }
+
 
   locally {
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val result: Future[Either[String, Int]] = getPowerLevel("Jazz").value
-    println(Await.result(result, Duration.Inf))
+    println(Await.result(getPowerLevel("Jazz").value, Duration.Inf))
     println(Await.result(getPowerLevel("NOTTHERE").value, Duration.Inf))
 
     val resultOfSpecialMove: Future[Either[String, Boolean]] = canSpecialMove("Jazz", "Hot Rod").value
     println(Await.result(resultOfSpecialMove, Duration.Inf))
+
+    val resultOfTacticalReport1 = tacticalReport("Jazz", "Bumblebee")
+    println(resultOfTacticalReport1)
+
+    val resultOfTacticalReport2 = tacticalReport("Jazz", "Hot Rod")
+    println(resultOfTacticalReport2)
+
+    val resultOfTacticalReport3 = tacticalReport("Jazz", "Ironhide")
+    println(resultOfTacticalReport3)
 
   }
 }
